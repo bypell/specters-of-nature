@@ -1,8 +1,11 @@
 package net.bypell.spectersofnature;
 
 import com.mojang.logging.LogUtils;
+import net.bypell.spectersofnature.entity.ModEntities;
+import net.bypell.spectersofnature.entity.client.TreeGhostRenderer;
 import net.bypell.spectersofnature.item.ModCreativeModeTabs;
 import net.bypell.spectersofnature.item.ModItems;
+import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -10,9 +13,7 @@ import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -34,6 +35,7 @@ public class SpectersOfNature
         ModCreativeModeTabs.register(modEventBus);
 
         ModItems.register(modEventBus);
+        ModEntities.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
 
@@ -68,7 +70,7 @@ public class SpectersOfNature
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event)
         {
-
+            EntityRenderers.register(ModEntities.TREE_GHOST.get(), TreeGhostRenderer::new);
         }
     }
 }
