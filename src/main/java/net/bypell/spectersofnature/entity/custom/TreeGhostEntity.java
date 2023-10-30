@@ -2,6 +2,7 @@ package net.bypell.spectersofnature.entity.custom;
 
 import net.bypell.spectersofnature.item.ModItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -40,6 +41,7 @@ public class TreeGhostEntity extends Monster {
 
     @Override
     public void tick() {
+        addParticlesAroundSelf(ParticleTypes.SMOKE, 4);
         this.noPhysics = true;
         super.tick();
         this.noPhysics = false;
@@ -48,14 +50,12 @@ public class TreeGhostEntity extends Monster {
         if (this.level().isClientSide()) {
             this.floatAnimationState.startIfStopped(this.tickCount);
         }
-
         if (this.getTarget() != null && this.getTarget() instanceof Player) {
             Player player = (Player) this.getTarget();
             if (this.distanceTo(player) < 5.0f && player.getMainHandItem().getItem() == ModItems.GOLDEN_CRUCIFIX.get()) {
                 if (--this.banishDelayTicks <= 0) {
                     this.banishDelayTicks = 10;
-                    this.hurt(this.damageSources().starve(), 2.0F);
-
+                    this.hurt(this.damageSources().starve(), 3.0F);
                 }
             }
         }
@@ -108,11 +108,33 @@ public class TreeGhostEntity extends Monster {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        // empeche les attaques nomrales avec épée (faut un crucifix)
+        // check pour empecher les attaques normales avec épée (faut un crucifix)
         if (source != this.damageSources().starve()) {
             return false;
         }
         return super.hurt(source, amount);
+    }
+
+    @Override
+    public void die(DamageSource pCause) {
+        super.die(pCause);
+        Player player = this.level().getNearestPlayer(this, 8.0f);
+        if (player != null) {
+            if (player.getMainHandItem().getItem() == ModItems.GOLDEN_CRUCIFIX.get()) {
+                player.getMainHandItem().shrink(1);
+            }
+        }
+    }
+
+
+    protected void addParticlesAroundSelf(ParticleOptions pParticleOption, int quantity) {
+        for(int i = 0; i < quantity; ++i) {
+            double d0 = this.random.nextGaussian() * 0.05D;
+            double d1 = this.random.nextGaussian() * 0.05D;
+            double d2 = this.random.nextGaussian() * 0.05D;
+            this.level().addParticle(pParticleOption, this.getRandomX(1.0D), this.getRandomY() + 0.5D, this.getRandomZ(1.0D), d0, d1, d2);
+        }
+
     }
 
     class TreeGhostFlyAttackGoal extends Goal {
