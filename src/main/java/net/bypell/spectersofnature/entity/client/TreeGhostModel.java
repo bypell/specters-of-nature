@@ -5,7 +5,8 @@ package net.bypell.spectersofnature.entity.client;// Made with Blockbench 4.8.3
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.model.EntityModel;
+import net.bypell.spectersofnature.entity.animations.ModAnimationDefinitions;
+import net.bypell.spectersofnature.entity.custom.TreeGhostEntity;
 import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -59,7 +60,9 @@ public class TreeGhostModel<T extends Entity> extends HierarchicalModel<T> {
 
 	@Override
 	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-
+		this.root().getAllParts().forEach(ModelPart::resetPose);
+		this.animateWalk(ModAnimationDefinitions.TREEGHOST_FLOATING, limbSwing, limbSwingAmount, 2f, 2.5f);
+		this.animate(((TreeGhostEntity) entity).floatAnimationState, ModAnimationDefinitions.TREEGHOST_FLOATING, ageInTicks, 1f);
 	}
 
 	@Override
