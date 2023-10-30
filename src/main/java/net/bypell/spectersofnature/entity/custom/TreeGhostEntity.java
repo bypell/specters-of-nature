@@ -11,6 +11,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
@@ -35,6 +36,7 @@ public class TreeGhostEntity extends Monster {
         super(pEntityType, pLevel);
         this.setNoGravity(true);
         this.moveControl = new TreeGhostEntity.TreeGhostMoveControl(this);
+        TreeGhostEntity.this.setDeltaMovement(0, 0, 0);
     }
 
     public final AnimationState floatAnimationState = new AnimationState();
