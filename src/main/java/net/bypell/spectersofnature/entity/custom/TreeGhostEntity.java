@@ -1,5 +1,8 @@
 package net.bypell.spectersofnature.entity.custom;
 
+import net.bypell.spectersofnature.item.ModItems;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
@@ -15,6 +18,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Vex;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.antlr.runtime.tree.Tree;
@@ -23,6 +27,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.EnumSet;
 
 public class TreeGhostEntity extends Monster {
+
+    private int banishDelayTicks;
 
     public TreeGhostEntity(EntityType<? extends TreeGhostEntity> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -42,6 +48,17 @@ public class TreeGhostEntity extends Monster {
         if (this.level().isClientSide()) {
             this.floatAnimationState.startIfStopped(this.tickCount);
         }
+
+        if (this.getTarget() != null && this.getTarget() instanceof Player) {
+            Player player = (Player) this.getTarget();
+            if (this.distanceTo(player) < 5.0f && player.getMainHandItem().getItem() == ModItems.GOLDEN_CRUCIFIX.get()) {
+                if (--this.banishDelayTicks <= 0) {
+                    this.banishDelayTicks = 10;
+                    this.hurt(this.damageSources().starve(), 2.0F);
+
+                }
+            }
+        }
     }
 
     private void setupAnimationStates() {
@@ -51,16 +68,16 @@ public class TreeGhostEntity extends Monster {
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        this.goalSelector.addGoal(0, new TreeGhostEntity.TreeGhostFlyAttackGoal());
-        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 100.0F, 1.0F));
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(2, new TreeGhostEntity.TreeGhostFlyAttackGoal());
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, false));
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 1000D)
-                .add(Attributes.ATTACK_DAMAGE, 2f)
-                .add(Attributes.ATTACK_KNOCKBACK, 1f)
+                .add(Attributes.MAX_HEALTH, 20D)
+                .add(Attributes.ATTACK_DAMAGE, 5f)
+                .add(Attributes.ATTACK_KNOCKBACK, 20f)
                 .add(Attributes.FOLLOW_RANGE, 80f)
                 .add(Attributes.MOVEMENT_SPEED, 0.2f)
                 .add(Attributes.ATTACK_SPEED, 0.1f);
@@ -92,7 +109,10 @@ public class TreeGhostEntity extends Monster {
     @Override
     public boolean hurt(DamageSource source, float amount) {
         // empeche les attaques nomrales avec épée (faut un crucifix)
-        return false;
+        if (source != this.damageSources().starve()) {
+            return false;
+        }
+        return super.hurt(source, amount);
     }
 
     class TreeGhostFlyAttackGoal extends Goal {
@@ -152,6 +172,10 @@ public class TreeGhostEntity extends Monster {
                 TreeGhostEntity.this.moveControl.setWantedPosition(vec3.x, vec3.y - 1f, vec3.z, 1.0D);
             }
         }
+
+        public void stop() {
+            TreeGhostEntity.this.hurt(TreeGhostEntity.this.damageSources().starve(), 200.0F);
+        }
     }
 
     class TreeGhostMoveControl extends MoveControl {
@@ -164,8 +188,7 @@ public class TreeGhostEntity extends Monster {
                 Vec3 vec3 = new Vec3(this.wantedX - TreeGhostEntity.this.getX(), this.wantedY - TreeGhostEntity.this.getY(), this.wantedZ - TreeGhostEntity.this.getZ());
                 double d0 = vec3.length();
 
-                TreeGhostEntity.this.setDeltaMovement(vec3.scale(0.2D / d0));
-                System.out.println(vec3.scale(this.speedModifier * 0.05D / d0));
+                TreeGhostEntity.this.setDeltaMovement(vec3.scale(0.25D / d0));
                 if (TreeGhostEntity.this.getTarget() == null) {
                     Vec3 vec31 = TreeGhostEntity.this.getDeltaMovement();
                     TreeGhostEntity.this.setYRot(-((float) Mth.atan2(vec31.x, vec31.z)) * (180F / (float)Math.PI));
