@@ -36,7 +36,6 @@ public class TreeGhostEntity extends Monster {
         super(pEntityType, pLevel);
         this.setNoGravity(true);
         this.moveControl = new TreeGhostEntity.TreeGhostMoveControl(this);
-        TreeGhostEntity.this.setDeltaMovement(0, 0, 0);
     }
 
     public final AnimationState floatAnimationState = new AnimationState();
