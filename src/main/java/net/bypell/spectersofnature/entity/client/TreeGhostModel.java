@@ -61,7 +61,6 @@ public class TreeGhostModel<T extends Entity> extends HierarchicalModel<T> {
 	@Override
 	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 		this.root().getAllParts().forEach(ModelPart::resetPose);
-		this.animateWalk(ModAnimationDefinitions.TREEGHOST_FLOATING, limbSwing, limbSwingAmount, 2f, 2.5f);
 		this.animate(((TreeGhostEntity) entity).floatAnimationState, ModAnimationDefinitions.TREEGHOST_FLOATING, ageInTicks, 1f);
 	}
 
