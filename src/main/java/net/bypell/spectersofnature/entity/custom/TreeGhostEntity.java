@@ -85,19 +85,19 @@ public class TreeGhostEntity extends Monster {
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() {
-        return SoundEvents.VEX_AMBIENT;
+        return SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM;
     }
 
     @Nullable
     @Override
     protected SoundEvent getHurtSound(DamageSource pDamageSource) {
-        return SoundEvents.VEX_CHARGE;
+        return SoundEvents.ELDER_GUARDIAN_HURT;
     }
 
     @Nullable
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvents.VEX_DEATH;
+        return SoundEvents.ALLAY_DEATH;
     }
 
     @Override
