@@ -15,7 +15,7 @@ public class ModEntities {
 
     public static final RegistryObject<EntityType<TreeGhostEntity>> TREE_GHOST =
             ENTITY_TYPES.register("treeghost", () -> EntityType.Builder.of(TreeGhostEntity::new, MobCategory.CREATURE)
-                    .sized(1.5f, 1.5f).build("treeghost"));
+                    .sized(1.0f, 2.0f).build("treeghost"));
 
 
 

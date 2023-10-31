@@ -43,9 +43,7 @@ public class TreeGhostEntity extends Monster {
     @Override
     public void tick() {
         addParticlesAroundSelf(ParticleTypes.SMOKE, 4);
-        this.noPhysics = true;
         super.tick();
-        this.noPhysics = false;
         setNoGravity(true);
 
         if (this.level().isClientSide()) {
@@ -77,7 +75,7 @@ public class TreeGhostEntity extends Monster {
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createLivingAttributes()
                 .add(Attributes.MAX_HEALTH, 20D)
-                .add(Attributes.ATTACK_DAMAGE, 5f)
+                .add(Attributes.ATTACK_DAMAGE, 10f)
                 .add(Attributes.ATTACK_KNOCKBACK, 20f)
                 .add(Attributes.FOLLOW_RANGE, 80f)
                 .add(Attributes.MOVEMENT_SPEED, 0.2f)
@@ -186,6 +184,7 @@ public class TreeGhostEntity extends Monster {
          * Keep ticking a continuous task that has already been started
          */
         public void tick() {
+            TreeGhostEntity.this.noPhysics = true;
             LivingEntity livingentity = TreeGhostEntity.this.getTarget();
             if (livingentity != null) {
                 if (TreeGhostEntity.this.getBoundingBox().intersects(livingentity.getBoundingBox())) {
