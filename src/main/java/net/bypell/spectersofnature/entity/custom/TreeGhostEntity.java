@@ -50,12 +50,13 @@ public class TreeGhostEntity extends Monster {
         }
         if (this.getTarget() != null && this.getTarget() instanceof Player) {
             Player player = (Player) this.getTarget();
-            if (this.distanceTo(player) < 5.0f && player.getMainHandItem().getItem() == ModItems.GOLDEN_CRUCIFIX.get()) {
+            if (this.distanceTo(player) < 5.0f && player.getMainHandItem().getItem() == ModItems.GOLDEN_CRUCIFIX.get() && isPlayerLookingAtMe(player)) {
                 if (--this.banishDelayTicks <= 0) {
                     this.banishDelayTicks = 10;
                     this.hurt(this.damageSources().starve(), 3.0F);
                 }
             }
+
         }
     }
 
@@ -122,6 +123,15 @@ public class TreeGhostEntity extends Monster {
                 player.getMainHandItem().shrink(1);
             }
         }
+    }
+
+    private boolean isPlayerLookingAtMe(Player player) {
+        Vec3 vec3 = player.getViewVector(1.0F).normalize();
+        Vec3 vec31 = new Vec3(this.getX() - player.getX(), this.getEyeY() - player.getEyeY(), this.getZ() - player.getZ());
+        double d0 = vec31.length();
+        vec31 = vec31.normalize();
+        double d1 = vec3.dot(vec31);
+        return d1 < 1f && d1 > 0.5f;
     }
 
 
